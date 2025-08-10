@@ -1,0 +1,19 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Google Cloud credentials
+*.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.class
+
+# IDE
+.vscode/
+
+# Logs
+logs/
+*.log
