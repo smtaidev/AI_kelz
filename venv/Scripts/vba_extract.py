@@ -1,4 +1,4 @@
-#!C:\Users\konok\Desktop\pc-main\kelz\backup files\kelz_complete(incident&qta)\venv\Scripts\python.exe
+#!C:\Users\konok\Desktop\pc-main\kelz\kelz_updated\kelz_complete\venv\Scripts\python.exe
 
 ##############################################################################
 #

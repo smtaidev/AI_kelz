@@ -11,9 +11,14 @@ services:
       - ./app:/app/app
       - ./temp:/app/temp
     environment:
-      - PYTHONPATH=/app
-      - PYTHONUNBUFFERED=1
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      PYTHONPATH: /app
+      PYTHONUNBUFFERED: 1
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credential.json
+      PROJECT_ID: qsync-genesys
+      LOCATION: eu
+      PROCESSOR_ID: 1a3f804e6db79958
+      PROCESSOR_VERSION: rc
     depends_on:
       - db
       - redis
