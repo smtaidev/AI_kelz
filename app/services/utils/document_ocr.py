@@ -194,7 +194,11 @@ class DocumentOCR:
         print(f"Processing: {os.path.basename(file_path)}")
         
         # Step 1: Prepare file (convert if necessary)
-        processed_file_path, is_temporary = self.prepare_file_for_ocr(file_path)
+        try:
+            processed_file_path, is_temporary = self.prepare_file_for_ocr(file_path)
+        except Exception as e:
+            # Improved error handling for conversion failures
+            return f"Error: Could not prepare file for OCR. Details: {str(e)}"
         
         try:
             # Step 2: Check file limits
@@ -207,18 +211,22 @@ class DocumentOCR:
             if size_exceeds or pages_exceed:
                 print(f"File exceeds limits (Size: {size_exceeds}, Pages: {pages_exceed})")
                 print("Sending to file processor for splitting...")
-                
-                # Use FileProcessor to handle large files
-                combined_text = self.file_processor.process_file_with_ocr(processed_file_path, self)
-                return combined_text
+                try:
+                    # Use FileProcessor to handle large files
+                    combined_text = self.file_processor.process_file_with_ocr(processed_file_path, self)
+                    return combined_text
+                except Exception as e:
+                    return f"Error: Could not process large file. Details: {str(e)}"
             else:
                 print("File within limits, processing directly...")
                 # Process directly
-                return self.extract_text_from_single_file(processed_file_path)
-        
+                try:
+                    return self.extract_text_from_single_file(processed_file_path)
+                except Exception as e:
+                    return f"Error: Could not extract text from file. Details: {str(e)}"
         finally:
             # Clean up temporary file if created
-            if is_temporary and os.path.exists(processed_file_path):
+            if 'is_temporary' in locals() and is_temporary and os.path.exists(processed_file_path):
                 try:
                     os.remove(processed_file_path)
                     print(f"Cleaned up temporary file: {os.path.basename(processed_file_path)}")

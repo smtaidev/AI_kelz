@@ -6,7 +6,7 @@ services:
     build: .
     container_name: kelz_app
     ports:
-      - "8000:8000"
+      - "8001:1801"
     volumes:
       - ./app:/app/app
       - ./temp:/app/temp
