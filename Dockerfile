@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app/ ./app/
 # Copy the qsync-genesys-9281cb30e0a1.json file
-COPY qsync-genesys-9281cb30e0a1.json ./
+COPY credential.json ./
 
 # Create directory for temporary files
 RUN mkdir -p /app/temp
