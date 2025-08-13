@@ -23,8 +23,6 @@ class VoiceTranscriber:
     
     def __init__(self):
         self.openai_api_key = OPENAI_API_KEY
-        if not self.openai_api_key:
-            print("⚠️  OpenAI API key not found. Transcription features will be limited.")
     
     def transcribe_audio(self, audio_file_path: str) -> Optional[str]:
         """
@@ -38,20 +36,15 @@ class VoiceTranscriber:
         """
         try:
             if not self.openai_api_key:
-                print("❌ OpenAI API key required for transcription")
                 return None
                 
             if not os.path.exists(audio_file_path):
-                print(f"❌ Audio file not found: {audio_file_path}")
                 return None
             
             # Check file size (Whisper has 25MB limit)
             file_size = os.path.getsize(audio_file_path)
             if file_size > 25 * 1024 * 1024:  # 25MB
-                print("❌ File too large for Whisper API (max 25MB)")
                 return None
-            
-            print(f"🎤 Transcribing audio file: {audio_file_path}")
             
             headers = {
                 'Authorization': f'Bearer {self.openai_api_key}'
@@ -73,15 +66,11 @@ class VoiceTranscriber:
             
             if response.status_code == 200:
                 transcription = response.text.strip()
-                print("✅ Transcription completed successfully")
                 return transcription
             else:
-                print(f"❌ Transcription failed: {response.status_code}")
-                print(response.text)
                 return None
                 
-        except Exception as e:
-            print(f"❌ Error during transcription: {str(e)}")
+        except Exception:
             return None
 
     def process_file_with_results(self, audio_file_path: str):
@@ -99,8 +88,7 @@ class VoiceTranscriber:
                 # In a full implementation, you might want to add text polishing
                 return original, original
             return None, None
-        except Exception as e:
-            print(f"❌ Error processing file: {str(e)}")
+        except Exception:
             return None, None
 
 def transcribe_audio(audio_file_path: str) -> Optional[str]:
@@ -116,6 +104,5 @@ def transcribe_audio(audio_file_path: str) -> Optional[str]:
     try:
         transcriber = VoiceTranscriber()
         return transcriber.transcribe_audio(audio_file_path)
-    except ValueError as e:
-        print(f"Error: {e}")
+    except Exception:
         return None

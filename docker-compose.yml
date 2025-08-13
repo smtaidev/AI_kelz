@@ -1,19 +1,22 @@
-version: '3.8'
-
 services:
   # FastAPI Application
   app:
     build: .
     container_name: kelz_app
     ports:
-      - "3002:3002"
+      - "3005:3005"
     volumes:
       - ./app:/app/app
       - ./temp:/app/temp
     environment:
-      - PYTHONPATH=/app
-      - PYTHONUNBUFFERED=1
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      PYTHONPATH: /app
+      PYTHONUNBUFFERED: 1
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      # GOOGLE_APPLICATION_CREDENTIALS: /app/credential.json
+      # PROJECT_ID: qsync-genesys
+      # LOCATION: eu
+      # PROCESSOR_ID: 1a3f804e6db79958
+      # PROCESSOR_VERSION: rc
     depends_on:
       - db
       - redis
