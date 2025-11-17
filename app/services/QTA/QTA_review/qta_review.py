@@ -90,7 +90,7 @@ class QTAreview:
 
                 Your response must be a valid JSON object with the following fields:
 
-                - **quality_review**: A list of objects with criterion and assessment (e.g., [{{"criterion": "Actions Completed", "assessment": "All actions satisfactorily completed"}}, {{"criterion": "Content Updates", "assessment": "Content updates are satisfactory"}}, {{"criterion": "Data Integrity", "assessment": "Evidence compliant with data integrity standards"}}]).
+                - **quality_review**: A list of objects where criterion names are keys and assessments are values (e.g., [{{\"Actions Completed\": \"All actions satisfactorily completed\"}}, {{\"Content Updates\": \"Content updates are satisfactory\"}}, {{\"Data Integrity\": \"Evidence compliant with data integrity standards\"}}]).
                 - **change_summary**: A single string with detailed summary of actions to be completed by AI on attachment or new documents as required auto transcription.
                 - **review_summary**: A single string with observations and findings from the review (e.g., "Temperature excursion in storage area. Product stored above acceptable limits").
                 - **document_text**: The full revised version of the original document, reflecting all relevant changes.
@@ -114,9 +114,9 @@ class QTAreview:
                 Example format:
                 {{
                   "quality_review": [
-                    {{"criterion": "Actions Completed", "assessment": "All user instructions have been addressed"}},
-                    {{"criterion": "Content Updates", "assessment": "Content updates are satisfactory"}},
-                    {{"criterion": "Template Updates", "assessment": "Template structure improved"}}
+                    {{"Actions Completed": "Description of completion status"}},
+                    {{"Content Updates": "Assessment of content updates"}},
+                    {{"Template Updates": "Assessment of template updates"}}
                   ],
                   "change_summary": "Single string describing actions completed on documents",
                   "review_summary": "Single string with observations and findings",
@@ -143,7 +143,7 @@ class QTAreview:
 
         ### Response Format:
         Return a valid JSON object with the following fields:
-        - "quality_review": List of objects, each with "criterion" and "assessment" fields
+        - "quality_review": List of objects where criterion names are keys and assessments are values
         - "change_summary": Single string with detailed summary of actions to be completed by AI on attachment or new documents as required auto transcription
         - "review_summary": Single string with observations and findings from the review (e.g., "Temperature excursion in storage area. Product stored above acceptable limits")
         - "document_text": The fully revised client document incorporating the user changes
@@ -151,9 +151,9 @@ class QTAreview:
         Example format:
         {{
           "quality_review": [
-            {{"criterion": "Actions Completed", "assessment": "All user instructions have been addressed"}},
-            {{"criterion": "Content Updates", "assessment": "Content updates are satisfactory"}},
-            {{"criterion": "Template Updates", "assessment": "Template structure improved"}}
+            {{"Actions Completed": "Description of completion status"}},
+            {{"Content Updates": "Assessment of content updates"}},
+            {{"Template Updates": "Assessment of template updates"}}
           ],
           "change_summary": "Single string describing actions completed on documents",
           "review_summary": "Single string with observations and findings",
