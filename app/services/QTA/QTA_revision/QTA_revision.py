@@ -18,62 +18,62 @@ class QTARevision:
 
 
     def get_per_minute_summary(self, input_data: per_minute_qta_revision_request) -> per_minute_qta_revision_response:
-        prompt = f"""
-            You are a language model that receives an audio transcription related to quality and change processes.
-            The transcription text is: {input_data.transcribed_text}
-
-            You may also receive previous extracted information:
-            - Existing changed details: {input_data.changed_details}
-            - Existing action summary: {input_data.action_summary}
-
-            Your task is to analyze the new transcription and update two sections:
-
-            1. **changed_details** — List all topics discussed with brief explanations (1–2 sentences each).  
-            Topics to detect:
-                - Change Details (Upload change requests, Change control processes)
-                - CAPA (Corrective and Preventive Actions)
-                - SME (Subject Matter Expert) Inputs and Concerns
-                - Gap Assessment (especially about in-house vs external templates)
-
-            2. **action_summary** — Provide a concise list of concrete actions, next steps, or follow-up tasks mentioned in the audio.  
-            Include actions required by CAPA, Change Control, or Change Requests.  
-            If a gap assessment or document comparison is required, describe that as well.
-
-            **Important Instructions:**
-            - Always preserve and include any relevant content from the existing sections if still relevant.
-            - If a topic was mentioned before but appears again, keep or update it as needed (do not remove unless explicitly contradicted).
-            - Maintain markdown format for `changed_details` using `- **Topic**:` structure.
-            - Write clear bullet points for `action_summary`.
-            - Respond **only with valid JSON**, no markdown formatting outside the JSON and no explanations.
-
-            Example Input:
-            {{
-            "text": "We discussed uploading the new change request and whether a gap assessment is required for external templates.",
-            "existing_changed_details": "- **SME Inputs and Concerns**: SME raised issues about document alignment.",
-            "existing_action_summary": "- Review SME feedback from last session."
-            }}
-
-            Example Output:
-            {{
-            "changed_details": "- **SME Inputs and Concerns**: SME raised issues about document alignment.\n- **Change Details**: The team discussed uploading a new change request.\n- **Gap Assessment**: A gap assessment may be required between in-house and external templates.",
-            "action_summary": "- Upload the new change request for review.\n- Conduct gap assessment between internal and external templates.\n- Review SME feedback for document alignment."
-            }}
-        """
-
-
-
-
-        
-
-        
-        response = self.get_openai_response(prompt)
-        print(response)
         try:
+            system_prompt = """You are a language model specialized in analyzing audio transcriptions related to quality and change processes.
+
+Your task: Analyze transcriptions and extract key information about quality processes, updating existing information appropriately.
+
+Key topics to detect:
+- Change Details (Upload change requests, Change control processes)
+- CAPA (Corrective and Preventive Actions)
+- SME (Subject Matter Expert) Inputs and Concerns
+- Gap Assessment (especially about in-house vs external templates)
+
+Response format: Return ONLY valid JSON with exactly two keys:
+- "changed_details": A SINGLE STRING containing markdown-formatted bullet points (use \\n to separate lines)
+- "action_summary": A SINGLE STRING containing bullet points for actions (use \\n to separate lines)
+
+CRITICAL: Both fields must be STRINGS, not arrays or lists!
+
+Example format:
+{
+  "changed_details": "- **Topic 1**: Description here\\n- **Topic 2**: Another description",
+  "action_summary": "- Action item 1\\n- Action item 2\\n- Action item 3"
+}
+
+JSON formatting rules:
+- Use \\n for line breaks within strings, never actual line breaks
+- Both values must be single strings with \\n separators, NOT arrays
+- Preserve existing relevant content when provided
+- Ensure proper JSON escaping of quotes and special characters
+- Return only the JSON object, no explanations or additional text"""
+
+            user_prompt = f"""Analyze this transcription and update the information:
+
+Transcription: {input_data.transcribed_text}
+
+Existing changed details: {input_data.changed_details if input_data.changed_details else "None"}
+Existing action summary: {input_data.action_summary if input_data.action_summary else "None"}
+
+Provide updated JSON response with changed_details and action_summary."""
+
+            response = self.get_openai_response(user_prompt, system_prompt)
+            print(f"Per-minute response: {response}")
+            
+            if not response or response.strip() == "":
+                raise ValueError("Empty response from OpenAI")
+            
             response_dict = json.loads(response)
-        except json.JSONDecodeError:
-             raise HTTPException(status_code=500, detail="Failed to parse model response as JSON.")
-        
-        return per_minute_qta_revision_response(**response_dict)
+            return per_minute_qta_revision_response(**response_dict)
+            
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            print(f"Raw response: {response}")
+            raise HTTPException(status_code=500, detail=f"Failed to parse model response as JSON: {str(e)}")
+        except ValidationError as e:
+            raise HTTPException(status_code=500, detail=f"Response validation failed: {str(e)}")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error in get_per_minute_summary: {str(e)}")
     
     
     def get_final_summary(self, input_data:final_qta_revision_request) -> final_qta_revision_response:
