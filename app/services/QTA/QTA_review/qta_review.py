@@ -22,7 +22,7 @@ class QTAreview:
         existing_quality_review = json.dumps(input_data.quality_review or [])
 
         prompt = f"""
-                You are a language model that receives audio transcript {transcribed_text} related to quality and change processes. Your task is to analyze the text and determine whether any of the following quality review aspects are discussed.
+                You are an Expert QTA Reviewer that receives audio transcript {transcribed_text} related to quality and change processes. Your task is to analyze the text and determine whether any of the following quality review aspects are discussed.
 
                 You may also receive existing details from earlier reviews {existing_quality_review}. If an item was already covered previously, you must still include it in your response if it is present in the new text.
 
@@ -45,11 +45,11 @@ class QTAreview:
 
                 {{
                 "quality_review": [
-                  {{"criterion": "Actions Completed", "assessment": "Description of completion status"}},
-                  {{"criterion": "Content Updates", "assessment": "Assessment of content updates"}},
-                  {{"criterion": "Template Updates", "assessment": "Assessment of template updates"}}
+                  {{"Actions Completed": "Description of completion status"}},
+                  {{"Content Updates": "Assessment of content updates"}},
+                  {{"Template Updates": "Assessment of template updates"}}
                 ],
-                "change_summary": "Single string with detailed summary of actions to be completed by AI on attachment or new documents",
+                "change_summary": "Single string with detailed summary of actions to be completed by AI on attachment or new documents",        
                 "review_summary": "Single string with observations and findings from the review"
                 }}
                 """
