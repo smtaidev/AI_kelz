@@ -81,12 +81,13 @@ class QTAreview:
 
                 Your task is to revise the **original_document** using:
                 1. The user's instructions provided in the **transcribed_text**.
-                2. The **reference_document**, which includes content on a similar topic but is a good example of how the document should be.
+                2. The **reference_document** (if provided), which is a dictionary containing multiple filename(s) as keys and their respective document content as values - use these as references for how the document should be structured or what content to include.
 
                 ### Instructions:
                 - First, analyze the **transcribed_text** to extract key instructions or intent behind the changes.
-                - Then, compare the **original_document** with the **reference_document** to identify edits such as additions, removals, or rewritten sections.
-                - Use both sources (instructions and reference) to make accurate and complete updates to the **original_document**.
+                - If **reference_document** is provided, examine the document(s) within it to understand the desired structure, content, or formatting.
+                - Apply the user instructions to update the **original_document**, using the reference document(s) as guidance when available.
+                - If no reference document is provided, rely solely on the transcribed instructions.
 
                 Your response must be a valid JSON object with the following fields:
 
@@ -103,8 +104,8 @@ class QTAreview:
                 ### User Instructions:
                 {input_data.transcribed_text}
 
-                ### Reference Document (With Intended Changes):
-                {input_data.reference_document}
+                ### Reference Document(s):
+                {input_data.reference_document if input_data.reference_document else 'No reference document provided'}
 
                 ### Original Document (To Be Updated):
                 {input_data.original_document}
@@ -179,7 +180,7 @@ class QTAreview:
     
     def get_openai_response (self, prompt:str)->str:
         completion =self.client.chat.completions.create(
-            model="gpt-4.1",
+            model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7            
         )
