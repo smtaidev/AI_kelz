@@ -15,7 +15,7 @@ class per_minute_qta_review_response(BaseModel):
     review_summary:str
 class final_qta_review_request(BaseModel):
     transcribed_text:str
-    reference_document: Optional[str]
+    reference_document: Optional[Dict[str,Any]]=None
     original_document:str
 
 class final_qta_review_response(BaseModel):
